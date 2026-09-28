@@ -485,6 +485,9 @@ Current tests cover:
 - Invalid categorical values
 - Internet-service consistency
 - Phone-service consistency
+- Training metric calculation
+- Final model selection
+- OOF threshold selection
 
 Run all tests with:
 
@@ -495,7 +498,7 @@ pytest
 Current test result:
 
 ```text
-9 passed
+13 passed
 ```
 
 ---
@@ -529,6 +532,10 @@ customer-churn-ml/
 ├── tests/
 │   ├── test_data_processing.py
 │   └── test_predict.py
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 │
 ├── .gitignore
 ├── pytest.ini
@@ -649,6 +656,7 @@ Where:
 - Jupyter Notebook
 - Git
 - GitHub
+- GitHub Actions
 
 ---
 
@@ -675,6 +683,7 @@ This project demonstrates:
 - Model serialization
 - Reusable Python modules
 - Git version control
+- Continuous integration
 
 ---
 
@@ -694,11 +703,24 @@ The selected threshold should therefore not be interpreted as a universal busine
 
 ---
 
+## Continuous Integration
+
+GitHub Actions is configured to run the automated test suite on pushes and pull requests to the `main` branch.
+
+The CI workflow:
+
+- Sets up Python
+- Installs project dependencies
+- Runs the full `pytest` test suite
+
+This helps catch regressions automatically before changes are merged.
+
+---
+
 ## Future Improvements
 
 Possible future improvements include:
 
-- GitHub Actions CI
 - Probability calibration
 - Bootstrap confidence intervals
 - Cost-sensitive threshold selection
