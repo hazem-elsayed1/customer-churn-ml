@@ -538,9 +538,8 @@ Current test result:
 customer-churn-ml/
 │
 ├── data/
-│   ├── raw/
-│   │   └── Telco-Customer-Churn.csv
-│   └── processed/
+│   └── raw/
+│       └── Telco-Customer-Churn.csv
 │
 ├── models/
 │   └── churn_model.joblib
@@ -549,8 +548,6 @@ customer-churn-ml/
 │   ├── 01_data_understanding.ipynb
 │   ├── 02_eda.ipynb
 │   └── 03_model_experiments.ipynb
-│
-├── reports/
 │
 ├── src/
 │   ├── __init__.py
@@ -608,6 +605,8 @@ pip install -r requirements.txt
 ```
 
 ---
+
+`src/train.py` is the canonical source of truth for the reusable training pipeline. Notebook 03 mirrors the same methodology for experimentation and portfolio presentation.
 
 ## Training
 
