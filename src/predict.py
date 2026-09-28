@@ -1,3 +1,4 @@
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -133,6 +134,7 @@ NUMERIC_FEATURES = [
 # Model Loading
 # =========================================================
 
+@lru_cache(maxsize=1)
 def load_model_bundle():
     if not MODEL_PATH.exists():
         raise FileNotFoundError(
@@ -153,9 +155,6 @@ def load_model_bundle():
     return bundle["model"], float(
         bundle["threshold"]
     )
-
-
-MODEL, THRESHOLD = load_model_bundle()
 
 
 # =========================================================
@@ -311,6 +310,8 @@ def predict_churn(
         customer_data
     )
 
+    model, threshold = load_model_bundle()
+
     customer_df = pd.DataFrame(
         [customer_data]
     )
@@ -320,13 +321,13 @@ def predict_churn(
     )
 
     probability = float(
-        MODEL.predict_proba(
+        model.predict_proba(
             customer_df
         )[:, 1][0]
     )
 
     prediction = int(
-        probability >= THRESHOLD
+        probability >= threshold
     )
 
     label = (
@@ -339,7 +340,7 @@ def predict_churn(
         "prediction": prediction,
         "label": label,
         "probability": probability,
-        "threshold": THRESHOLD,
+        "threshold": threshold,
     }
 
 

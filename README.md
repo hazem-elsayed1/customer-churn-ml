@@ -51,6 +51,21 @@ The dataset contains:
 
 The `customerID` column is excluded from modeling because it is an identifier rather than a meaningful predictive feature.
 
+### Dataset Source and Attribution
+
+This project uses the IBM Telco Customer Churn sample dataset.
+
+The dataset represents a fictional telecommunications company and is intended for analytics and machine learning practice.
+
+Sources:
+
+- [IBM Telco Customer Churn sample](https://www.ibm.com/docs/en/cognos-analytics/12.0.x?topic=samples-telco-customer-churn)
+- [Kaggle mirror: Telco Customer Churn by BlastChar](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)
+
+The dataset contains 7,043 customer records and 21 columns.
+
+The Kaggle dataset page attributes the data to the original authors and lists the data files as © Original Authors. This project does not claim ownership of the dataset.
+
 ---
 
 ## Main Features
@@ -236,6 +251,8 @@ The following models were compared using 5-fold stratified cross-validation on t
 | Decision Tree | 0.7322 | 0.4957 | 0.5003 | 0.4975 | 0.6582 |
 
 These initial results were used as a screening stage before hyperparameter tuning.
+
+Logistic Regression and Gradient Boosting were selected for tuning because they were the two strongest candidates in the initial cross-validation screening, while Logistic Regression also offered better interpretability for the final portfolio model.
 
 ---
 
@@ -432,6 +449,9 @@ Validation includes:
 - Negative numeric values
 - Internet-service consistency
 - Phone-service consistency
+- Training metric calculation
+- Final model selection
+- OOF threshold selection
 
 Example:
 
@@ -468,6 +488,8 @@ models/churn_model.joblib
 
 The prediction module loads the saved threshold automatically instead of hardcoding it.
 
+The model bundle is loaded lazily on the first prediction request and cached for subsequent predictions, avoiding unnecessary model loading during module imports.
+
 ---
 
 ## Automated Tests
@@ -485,9 +507,6 @@ Current tests cover:
 - Invalid categorical values
 - Internet-service consistency
 - Phone-service consistency
-- Training metric calculation
-- Final model selection
-- OOF threshold selection
 
 Run all tests with:
 
@@ -531,7 +550,8 @@ customer-churn-ml/
 │
 ├── tests/
 │   ├── test_data_processing.py
-│   └── test_predict.py
+│   ├── test_predict.py
+│   └── test_train.py
 │
 ├── .github/
 │   └── workflows/
