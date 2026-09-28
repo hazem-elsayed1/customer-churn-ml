@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
-
+import math
 import joblib
 import pandas as pd
 
@@ -214,12 +214,22 @@ def validate_numeric_values(
     for feature in NUMERIC_FEATURES:
         value = customer_data[feature]
 
+        if isinstance(value, bool):
+            raise TypeError(
+                f"{feature} must be a number, not a boolean."
+            )
+
         if not isinstance(
             value,
             (int, float),
         ):
             raise TypeError(
                 f"{feature} must be a number."
+            )
+
+        if not math.isfinite(value):
+            raise ValueError(
+                f"{feature} must be a finite number."
             )
 
         if value < 0:

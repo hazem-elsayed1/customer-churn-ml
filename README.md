@@ -297,6 +297,8 @@ Logistic Regression was selected as the final model because it achieved the stro
 
 It also provides relatively interpretable coefficients compared with more complex ensemble models.
 
+The tuned F1 comparison was performed at the default 0.5 classification threshold, while the final deployed threshold was selected separately using out-of-fold training predictions. Gradient Boosting did not use class weighting, and the screening ROC-AUC scores for Logistic Regression and Gradient Boosting were very close. Therefore, the selection should be interpreted as a practical portfolio-model choice based on tuned F1 and interpretability rather than proof that Logistic Regression is universally superior.
+
 ---
 
 ## Threshold Selection
@@ -446,12 +448,11 @@ Validation includes:
 - Unexpected features
 - Invalid categorical values
 - Invalid numeric types
+- Boolean values supplied for numeric features
+- Non-finite numeric values such as `NaN` and infinity
 - Negative numeric values
 - Internet-service consistency
 - Phone-service consistency
-- Training metric calculation
-- Final model selection
-- OOF threshold selection
 
 Example:
 
@@ -504,9 +505,18 @@ Current tests cover:
 - Missing input features
 - Unexpected input features
 - Negative numeric values
+- `NaN` rejection
+- Infinite numeric-value rejection
+- Boolean rejection for numeric fields
 - Invalid categorical values
 - Internet-service consistency
 - Phone-service consistency
+- `predict_churn` model/threshold behavior
+- Missing model-file handling
+- Invalid model-bundle handling
+- Training metric calculation
+- Final model selection
+- Exact out-of-fold threshold selection
 
 Run all tests with:
 
@@ -517,7 +527,7 @@ pytest
 Current test result:
 
 ```text
-13 passed
+19 passed
 ```
 
 ---

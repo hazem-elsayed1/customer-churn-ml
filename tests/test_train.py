@@ -90,23 +90,49 @@ def test_select_final_model_chooses_gradient_boosting():
     assert selected_model.strategy == "prior"
 
 
-def test_select_threshold_returns_valid_threshold_and_results():
+def test_select_threshold_selects_expected_best_threshold(monkeypatch):
     X_train = pd.DataFrame(
         {
-            "feature": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            "feature": [0, 1, 2, 3],
         }
     )
 
     y_train = pd.Series(
-        [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
+        [0, 0, 1, 1]
     )
 
-    model = DummyClassifier(strategy="prior")
+    model = DummyClassifier(
+        strategy="prior"
+    )
 
     cv = StratifiedKFold(
         n_splits=2,
         shuffle=True,
         random_state=42,
+    )
+
+    fake_probabilities = np.array(
+        [
+            [0.90, 0.10],
+            [0.60, 0.40],
+            [0.45, 0.55],
+            [0.20, 0.80],
+        ]
+    )
+
+    def fake_cross_val_predict(
+        estimator,
+        X,
+        y,
+        cv,
+        method,
+        n_jobs,
+    ):
+        return fake_probabilities
+
+    monkeypatch.setattr(
+        "src.train.cross_val_predict",
+        fake_cross_val_predict,
     )
 
     threshold, best_row, threshold_results = select_threshold(
@@ -116,22 +142,20 @@ def test_select_threshold_returns_valid_threshold_and_results():
         cv=cv,
     )
 
-    assert 0.20 <= threshold <= 0.81
+    assert threshold == 0.41
 
-    assert isinstance(best_row, pd.Series)
+    assert isinstance(
+        best_row,
+        pd.Series,
+    )
 
-    assert "Threshold" in best_row.index
-    assert "Accuracy" in best_row.index
-    assert "Precision" in best_row.index
-    assert "Recall" in best_row.index
-    assert "F1" in best_row.index
+    assert best_row["Threshold"] == 0.41
 
-    assert isinstance(threshold_results, pd.DataFrame)
+    assert isinstance(
+        threshold_results,
+        pd.DataFrame,
+    )
 
-    assert "Threshold" in threshold_results.columns
-    assert "Accuracy" in threshold_results.columns
-    assert "Precision" in threshold_results.columns
-    assert "Recall" in threshold_results.columns
-    assert "F1" in threshold_results.columns
-
-    assert len(threshold_results) > 0
+    assert len(
+        threshold_results
+    ) > 0
